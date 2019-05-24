@@ -21,6 +21,7 @@ python3 app.py
 #### Methods:
 ##### GET (http://localhost:5000):
 **/chain**
+
 Example Response:
 ```
 {
@@ -60,6 +61,7 @@ Example Response:
 }
 ```
 **/mine**
+
 Example Response:
 ```
 {
@@ -88,10 +90,15 @@ Example Response:
 ```
 ##### POST (http://localhost:5000):
 **/transactions/new**
+
 Example send:
+
 &nbsp;&nbsp;&nbsp;&nbsp;sender: string
+
 &nbsp;&nbsp;&nbsp;&nbsp;recipient: string
+
 &nbsp;&nbsp;&nbsp;&nbsp;amount: int
+
 ```
 {
 	"sender": "John",
@@ -107,8 +114,11 @@ Example Response:
 ```
 
 **/nodes/register**
+
 Example send:
+
 &nbsp;&nbsp;&nbsp;&nbsp;nodes: array of strings
+
 ```
 {
 	"nodes":["http://127.0.0.1:5000"]

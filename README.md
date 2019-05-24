@@ -1,9 +1,9 @@
 # Simple-Blockchain-C
 
-This is a simple blockchain that is written in C and wrapped in Python
+This is a simple blockchain that is written in C++ and wrapped in Python
 
 ## Installation
-Create the wrapper for the C code:
+Create the wrapper for the C++ code:
 ```
 
 swig -c++ -python blockchain.i

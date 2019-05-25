@@ -1,6 +1,5 @@
 # Wrapper files
 build/
-blockchain.i
 blockchain.py
 blockchain_wrap.cxx
 

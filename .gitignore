@@ -2,6 +2,7 @@
 build/
 blockchain.py
 blockchain_wrap.cxx
+blockchain_wrap.o
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

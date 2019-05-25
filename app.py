@@ -95,8 +95,6 @@ def register_nodes():
     return jsonify(response), 200
 
 
-# MUST FIX CONSENSUS
-
 @app.route('/nodes/resolve', methods=['GET'])
 def consensus():
     response = None

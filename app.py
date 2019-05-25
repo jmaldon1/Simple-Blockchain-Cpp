@@ -1,9 +1,11 @@
-import blockchain
+from blockchain import block, transaction, Blockchain, vectorblock, vectortransaction, vectornodes
+# from blockchain import *
 import json
 from flask import Flask, jsonify, request
 from uuid import uuid4
 from urllib.parse import urlparse
 import requests
+import argparse
 
 
 # Instantiate our Node
@@ -14,7 +16,7 @@ node_identifier = str(uuid4()).replace('-', '')
 
 
 # Instantiate the Blockchain
-blockchain = blockchain.Blockchain()
+blockchain = Blockchain()
 
 
 @app.route('/mine', methods=['GET'])
@@ -69,6 +71,8 @@ def full_chain():
         'chain': parse_vector(blockchain.chain, "chain"),
         'length': blockchain.chain.size(),
     }
+    py_to_cpp(response['chain'], "chain")
+    # py_to_cpp([{"sender": "me", "recipient": "you", "amount": 1}, {"sender": "him", "recipient": "her", "amount": 2}], "transactions")
     return jsonify(response), 200
 
 
@@ -81,8 +85,8 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     for node in nodes:
-        parsed_url = urlparse(node)
-        blockchain.register_node(parsed_url.netloc)
+        parsed_node = urlparse(node).netloc
+        blockchain.register_node(parsed_node)
 
     response = {
         'message': 'New nodes have been added',
@@ -93,31 +97,29 @@ def register_nodes():
 
 # MUST FIX CONSENSUS
 
-# @app.route('/nodes/resolve', methods=['GET'])
-# def consensus():
-#     response = None
-#     for node in blockchain.nodes:
-#         get_nodes = requests.get('http://' + node + '/chain_ptr')
-#         print(get_nodes.json()['chain_ptr']['this'])
+@app.route('/nodes/resolve', methods=['GET'])
+def consensus():
+    response = None
+    for node in blockchain.nodes:
+        get_nodes = requests.get('http://' + node + '/chain')
 
-#     #     replaced = None
-#     #     if get_nodes.status_code == 200:
-#     #         chain = get_nodes.json()['chain_ptr']['this']
+        replaced = None
+        if get_nodes.status_code == 200:
+            chain = get_nodes.json()['chain']
 
-#     #         replaced = blockchain.resolve_conflicts(chain)
+            replaced = blockchain.resolve_conflicts(py_to_cpp(chain, "chain"))
 
-#     #     if replaced:
-#     #         response = {
-#     #             'message': 'Our chain was replaced',
-#     #             'new_chain': parse_vector(blockchain.chain, "chain")
-#     #         }
-#     #     else:
-#     #         response = {
-#     #             'message': 'Our chain is authoritative',
-#     #             'chain': parse_vector(blockchain.chain, "chain")
-#     #         }
-#     # return jsonify(response), 200
-#     return "done"
+        if replaced:
+            response = {
+                'message': 'Our chain was replaced',
+                'new_chain': parse_vector(blockchain.chain, "chain")
+            }
+        else:
+            response = {
+                'message': 'Our chain is authoritative',
+                'chain': parse_vector(blockchain.chain, "chain")
+            }
+    return jsonify(response), 200
 
 
 def parse_vector(vector, vector_type="normal"):
@@ -149,5 +151,48 @@ def parse_vector(vector, vector_type="normal"):
     return vector_list
 
 
+def py_to_cpp(obj_to_covert, obj_to_covert_type):
+    if obj_to_covert_type == "chain":
+        # Create a vector of blocks
+        chain_vector = vectorblock()
+        chain = obj_to_covert
+        for each_block in chain:
+            # Create a c++ block struct
+            block_struct = block()
+            block_struct.index = each_block['index']
+            block_struct.prev_hash = each_block['prev_hash']
+            block_struct.proof = each_block['proof']
+            block_struct.timestamp = each_block['timestamp']
+            block_struct.transactions = py_to_cpp(each_block['transactions'], "transactions")
+            chain_vector.push_back(block_struct)
+        return chain_vector
+
+    if obj_to_covert_type == "transactions":
+        # Create a vector of transactions
+        transaction_vector = vectortransaction()
+        transactions = obj_to_covert
+        for each_transaction in transactions:
+            # Create a c++ transaction struct
+            transaction_struct = transaction()
+            transaction_struct.sender = each_transaction['sender']
+            transaction_struct.recipient = each_transaction['recipient']
+            transaction_struct.amount = each_transaction['amount']
+            transaction_vector.push_back(transaction_struct)
+        return transaction_vector
+
+
+# check if argparse value is positive
+def check_positive(value):
+    ivalue = int(value)
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError("%s is an invalid positive int value" % value)
+    return ivalue
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    argument_parser = argparse.ArgumentParser()
+    argument_parser.add_argument(
+        '--port', default='5000', help='pass a port to start server on', type=check_positive)
+    arguments = argument_parser.parse_args()
+
+    app.run(host='0.0.0.0', port=arguments.port, debug=True)

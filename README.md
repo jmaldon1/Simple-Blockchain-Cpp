@@ -22,6 +22,8 @@ python3 app.py
 ##### GET (http://localhost:5000):
 **/chain**
 
+Returns the blockchain
+
 Example Response:
 ```
 {
@@ -62,6 +64,8 @@ Example Response:
 ```
 **/mine**
 
+mines a new block
+
 Example Response:
 ```
 {
@@ -88,8 +92,55 @@ Example Response:
     ]
 }
 ```
+**/nodes/resolve**
+
+Resolve conflicts by checking all registered nodes and replaces our chain with the longest valid chain.
+
+Example Response:
+```
+{
+    "message": "Our chain is authoritative",
+    "chain": [
+        {
+            "index": 1,
+            "prev_hash": "1",
+            "proof": 100,
+            "timestamp": 1558816247,
+            "transactions": []
+        },
+        {
+            "index": 2,
+            "prev_hash": "b38d0a7fb53745125ce277c7b368b92b9cc8b1d2e01571244c6bd739d4873613",
+            "proof": 35293,
+            "timestamp": 1558816351,
+            "transactions": [
+                {
+                    "amount": 1,
+                    "recipient": "f331df47a8254fa5a1359722695db213",
+                    "sender": "0"
+                }
+            ]
+        },
+        {
+            "index": 3,
+            "prev_hash": "8bf8ac14adb529fd67ddbc0b745b5331a79c8e21c93c56ca1c3b7dfb44ddb2c7",
+            "proof": 35089,
+            "timestamp": 1558816353,
+            "transactions": [
+                {
+                    "amount": 1,
+                    "recipient": "f331df47a8254fa5a1359722695db213",
+                    "sender": "0"
+                }
+            ]
+        }
+    ]
+}
+```
 ##### POST (http://localhost:5000):
 **/transactions/new**
+
+Create a new transaction
 
 Example send:
 
@@ -114,6 +165,8 @@ Example Response:
 ```
 
 **/nodes/register**
+
+Register a node
 
 Example send:
 

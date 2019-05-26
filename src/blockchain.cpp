@@ -194,21 +194,21 @@ bool Blockchain::resolve_conflicts(const std::vector<block> &passed_chain)
 
 }
 
-int main()
-{
-    Blockchain oldchain;
-    // oldchain.new_block(35293);
-    // badchain.new_block(250, "135135");
+// int main()
+// {
+//     Blockchain oldchain;
+//     // oldchain.new_block(35293);
+//     // badchain.new_block(250, "135135");
 
-    Blockchain obj;
-    // std::cout << obj.proof_of_work(100) << std::endl;
-    // obj.new_block(35293);
-    // std::cout << oldchain.resolve_conflicts(obj.chain) << std::endl;
-    // std::cout << obj.chain[1].prev_hash << std::endl;
-    // std::cout << obj.valid_chain(badchain.chain) << std::endl;
+//     Blockchain obj;
+//     // std::cout << obj.proof_of_work(100) << std::endl;
+//     // obj.new_block(35293);
+//     // std::cout << oldchain.resolve_conflicts(obj.chain) << std::endl;
+//     // std::cout << obj.chain[1].prev_hash << std::endl;
+//     // std::cout << obj.valid_chain(badchain.chain) << std::endl;
 
 
-    // obj.proof_of_work(100);
+//     // obj.proof_of_work(100);
 
-    return 0;
-}
+//     return 0;
+// }
